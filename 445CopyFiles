@@ -1,0 +1,39 @@
+@echo off
+setlocal
+
+:: === 設定變數 ===
+set SRC_USER=username
+set SRC_PASS=password
+set SRC_PATH=\\192.168.0.XXX\D$\files
+
+set DEST1=\\192.168.0.XXX\D$\files
+set DEST2=\\192.168.0.XXX\D$\files
+set DEST3=\\192.168.0.XXX\D$\files
+set DEST4=\\192.168.0.XXX\D$\files
+
+:: === 建立來源資料夾網路磁碟機 (使用 Z: 暫時掛載) ===
+net use Z: "%SRC_PATH%" /user:%SRC_USER% %SRC_PASS%
+if errorlevel 1 (
+    echo 錯誤：無法連線到來源資料夾。
+    goto :EOF
+)
+
+:: === 複製檔案到各個目的地 (強制覆蓋 /Y) ===
+echo 正在複製檔案到 %DEST1%
+xcopy /Y /E /Q "Z:\*" "%DEST1%"
+
+echo 正在複製檔案到 %DEST2%
+xcopy /Y /E /Q "Z:\*" "%DEST2%"
+
+echo 正在複製檔案到 %DEST3%
+xcopy /Y /E /Q "Z:\*" "%DEST3%"
+
+echo 正在複製檔案到 %DEST4%
+xcopy /Y /E /Q "Z:\*" "%DEST4%"
+
+:: === 中斷連線並清除磁碟機對應 ===
+net use Z: /delete
+
+echo 完成複製作業。
+endlocal
+pause
